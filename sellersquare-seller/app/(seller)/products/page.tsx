@@ -279,11 +279,10 @@ export default function ProductsPage() {
                         onClick={() => toggleStatus(product.id)}
                         disabled={togglingId === product.id}
                         title="Click to toggle"
-                        className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium transition-opacity hover:opacity-80 disabled:opacity-60 ${
-                          product.status === "active"
+                        className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium transition-opacity hover:opacity-80 disabled:opacity-60 ${product.status === "active"
                             ? "bg-green-50 text-green-700"
                             : "bg-black/5 text-[#6B7280]"
-                        }`}
+                          }`}
                       >
                         {togglingId === product.id && (
                           <Loader2 size={11} className="animate-spin" />
