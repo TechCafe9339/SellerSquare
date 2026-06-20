@@ -95,7 +95,7 @@ export default function SellerLogin() {
                   Password
                 </label>
                 <Link
-                  href="/seller/forgot-password"
+                  href="/forgot-password"
                   className="text-xs font-medium text-[#2563EB] hover:underline"
                 >
                   Forgot password?
