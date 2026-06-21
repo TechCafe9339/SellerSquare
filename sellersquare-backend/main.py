@@ -5,6 +5,7 @@ from routes.product import router as product_router
 from routes.dashboard import router as dashboard_router
 from routes.upload import router as upload_router
 from routes.order import router as order_router
+from routes.admin import router as admin_router
 
 app = FastAPI()
 
@@ -21,7 +22,7 @@ app.include_router(product_router)
 app.include_router(order_router)
 app.include_router(dashboard_router)
 app.include_router(upload_router)
-
+app.include_router(admin_router)
 
 @app.get("/")
 def home():
