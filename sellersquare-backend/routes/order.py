@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-
+from datetime import datetime
 from bson import ObjectId
 
 from database.database import (
@@ -7,6 +7,7 @@ from database.database import (
     order_collection,
     product_collection,
     wishlist_collection,
+    address_collection,
 )
 
 from utils.customer_auth import get_current_customer
@@ -19,12 +20,22 @@ router = APIRouter(prefix="/orders", tags=["Orders"])
 @router.post("/checkout")
 def checkout(data: CreateOrder, customer_id: str = Depends(get_current_customer)):
 
+    address = address_collection.find_one(
+        {
+            "_id": ObjectId(data.address_id),
+            "customer_id": customer_id,
+        }
+    )
+
+    if not address:
+        raise HTTPException(status_code=404, detail="Address not found")
+
     cart_items = list(cart_collection.find({"customer_id": customer_id}))
 
     if not cart_items:
         raise HTTPException(status_code=400, detail="Cart is empty")
 
-    total = 0
+    total_amount = 0
     items = []
 
     for item in cart_items:
@@ -36,31 +47,43 @@ def checkout(data: CreateOrder, customer_id: str = Depends(get_current_customer)
 
         subtotal = product["price"] * item["quantity"]
 
-        total += subtotal
+        total_amount += subtotal
 
         items.append(
             {
-                "product_id": item["product_id"],
-                "seller_id": product["seller_id"],
+                "product_id": str(product["_id"]),
                 "name": product["name"],
                 "price": product["price"],
                 "quantity": item["quantity"],
+                "seller_id": product["seller_id"],
             }
         )
 
     order = {
         "customer_id": customer_id,
         "items": items,
-        "address": data.address,
-        "total_amount": total,
+        "address": {
+            "full_name": address["full_name"],
+            "phone": address["phone"],
+            "address": address["address"],
+            "city": address["city"],
+            "state": address["state"],
+            "pincode": address["pincode"],
+        },
+        "payment_method": data.payment_method,
+        "total_amount": total_amount,
         "status": "Pending",
+        "created_at": datetime.utcnow(),
     }
 
     result = order_collection.insert_one(order)
 
     cart_collection.delete_many({"customer_id": customer_id})
 
-    return {"message": "Order placed", "order_id": str(result.inserted_id)}
+    return {
+        "message": "Order placed successfully",
+        "order_id": str(result.inserted_id),
+    }
 
 
 @router.get("/my-orders")
@@ -77,7 +100,8 @@ def my_orders(customer_id: str = Depends(get_current_customer)):
                 "id": str(order["_id"]),
                 "total_amount": order["total_amount"],
                 "status": order["status"],
-                "address": order["address"],
+                "created_at": order.get("created_at"),
+                "items": order["items"],
             }
         )
 
@@ -96,12 +120,12 @@ def order_details(order_id: str, customer_id: str = Depends(get_current_customer
 
     return {
         "id": str(order["_id"]),
-        "product_name": order["product_name"],
-        "quantity": order["quantity"],
-        "price": order["price"],
-        "total": order["total"],
+        "items": order["items"],
+        "total_amount": order["total_amount"],
         "status": order["status"],
         "address": order["address"],
+        "payment_method": order.get("payment_method", "COD"),
+        "created_at": order.get("created_at"),
     }
 
 

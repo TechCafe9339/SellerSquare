@@ -2,7 +2,8 @@ from pydantic import BaseModel
 
 
 class CreateOrder(BaseModel):
-    address: str
+    address_id: str
+    payment_method: str
 
 
 class OrderStatusUpdate(BaseModel):

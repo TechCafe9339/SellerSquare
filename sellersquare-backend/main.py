@@ -9,7 +9,7 @@ from routes.admin import router as admin_router
 from routes.cart import router as cart_router
 from routes.wishlist import router as wishlist_router
 from routes.order import router as order_router
-
+from routes.address import router as address_router
 
 
 from routes.customer import router as customer_router
@@ -34,6 +34,7 @@ app.include_router(customer_router)
 app.include_router(cart_router)
 app.include_router(wishlist_router)
 app.include_router(order_router)
+app.include_router(address_router)
 
 
 @app.get("/")
