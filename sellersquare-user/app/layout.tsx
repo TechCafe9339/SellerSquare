@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import { CategoryNav } from "@/components/storefront/CategoryNav";
+import { Footer } from "@/components/storefront/Footer";
 import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
@@ -31,7 +31,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <Navbar />
+        <CategoryNav />
         {children}
         <Footer />
         <Toaster position="top-right" />
