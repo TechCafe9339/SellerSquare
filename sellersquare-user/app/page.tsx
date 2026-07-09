@@ -35,8 +35,6 @@ export default async function HomePage() {
         <PromoGrid />
         <ProductRail title="Picked for you" products={recommendedProducts} />
       </main>
-
-      <Footer />
     </div>
   );
 }
