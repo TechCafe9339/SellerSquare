@@ -14,9 +14,11 @@ from bson import ObjectId
 from fastapi import Depends
 from utils.customer_auth import get_current_customer
 
+
+
 router = APIRouter(prefix="/customer", tags=["Customer"])
 
-
+"""
 @router.post("/register")
 def register_customer(customer: CustomerRegister):
 
@@ -47,11 +49,54 @@ def register_customer(customer: CustomerRegister):
         }
     )
 
-    send_otp_email(customer.email, otp)
+    #send_otp_email(customer.email, otp)
 
     return {"message": "OTP sent successfully", "otp": f"{otp}"}
+"""
+@router.post("/register")
+def register_customer(customer: CustomerRegister):
+    try:
+        print("Step 1")
 
+        existing = customer_collection.find_one({"email": customer.email})
+        print("Step 2")
 
+        if existing:
+            raise HTTPException(status_code=400, detail="Email already exists")
+
+        otp = str(random.randint(100000, 999999))
+        print("Step 3")
+        print("Password:", customer.password)
+        print("Password length:", len(customer.password))
+        customer_collection.insert_one(
+            {
+                "name": customer.name,
+                "email": customer.email,
+                "phone": customer.phone,
+                
+                "password": hash_password(customer.password),
+                "is_verified": False,
+            }
+        )
+        print("Step 4")
+
+        customer_otp_collection.insert_one(
+            {
+                "email": customer.email,
+                "otp": otp,
+                "expires_at": datetime.utcnow() + timedelta(minutes=10),
+            }
+        )
+        print("Step 5")
+
+        # send_otp_email(customer.email, otp)
+
+        print("Step 6")
+        return {"message": "OTP sent successfully", "otp": otp}
+
+    except Exception as e:
+        print("ERROR:", repr(e))
+        raise
 @router.post("/login")
 def login_customer(customer: CustomerLogin):
 

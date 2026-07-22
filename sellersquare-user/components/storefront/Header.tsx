@@ -1,7 +1,12 @@
+"use client";
+
 import Link from "next/link";
 import { Search, Heart, ShoppingCart, Package } from "lucide-react";
+import { useCartWishlist } from "@/lib/context/CartWishListContext";
 
 export function Header() {
+  const { cartCount, wishlistCount } = useCartWishlist();
+
   return (
     <header className="sticky top-0 z-50 border-b border-gray-200 bg-white">
       <div className="mx-auto flex max-w-[1320px] items-center gap-7 px-5 py-3.5 md:px-7">
@@ -47,9 +52,11 @@ export function Header() {
           >
             <Heart size={19} />
             Wishlist
-            <span className="absolute -top-0.5 right-1.5 flex h-[15px] min-w-[15px] items-center justify-center rounded-full bg-amber-500 px-1 text-[9.5px] font-bold text-white">
-              3
-            </span>
+            {wishlistCount > 0 && (
+              <span className="absolute -top-0.5 right-1.5 flex h-[15px] min-w-[15px] items-center justify-center rounded-full bg-amber-500 px-1 text-[9.5px] font-bold text-white">
+                {wishlistCount}
+              </span>
+            )}
           </Link>
           <Link
             href="/cart"
@@ -57,9 +64,11 @@ export function Header() {
           >
             <ShoppingCart size={19} />
             Cart
-            <span className="absolute -top-0.5 right-1.5 flex h-[15px] min-w-[15px] items-center justify-center rounded-full bg-amber-500 px-1 text-[9.5px] font-bold text-white">
-              2
-            </span>
+            {cartCount > 0 && (
+              <span className="absolute -top-0.5 right-1.5 flex h-[15px] min-w-[15px] items-center justify-center rounded-full bg-amber-500 px-1 text-[9.5px] font-bold text-white">
+                {cartCount}
+              </span>
+            )}
           </Link>
           <Link
             href="/login"

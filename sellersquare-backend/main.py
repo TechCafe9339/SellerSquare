@@ -10,6 +10,7 @@ from routes.cart import router as cart_router
 from routes.wishlist import router as wishlist_router
 from routes.order import router as order_router
 from routes.address import router as address_router
+from routes.products import router as products_router
 
 
 from routes.customer import router as customer_router
@@ -26,6 +27,7 @@ app.add_middleware(
 
 app.include_router(seller_router)
 app.include_router(product_router)
+app.include_router(products_router)
 app.include_router(seller_order_router)
 app.include_router(dashboard_router)
 app.include_router(upload_router)

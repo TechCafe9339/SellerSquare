@@ -1,3 +1,4 @@
+"use client";
 import { Flame } from "lucide-react";
 import { Product } from "@/lib/types";
 import { ProductCard } from "./ProductCard";
