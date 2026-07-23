@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Response
 from schemas.customer import CustomerRegister, CustomerLogin, VerifyOTP
 from database.database import (
     customer_collection,
@@ -13,8 +13,6 @@ from datetime import datetime, timedelta
 from bson import ObjectId
 from fastapi import Depends
 from utils.customer_auth import get_current_customer
-
-
 
 router = APIRouter(prefix="/customer", tags=["Customer"])
 
@@ -53,6 +51,8 @@ def register_customer(customer: CustomerRegister):
 
     return {"message": "OTP sent successfully", "otp": f"{otp}"}
 """
+
+
 @router.post("/register")
 def register_customer(customer: CustomerRegister):
     try:
@@ -73,7 +73,6 @@ def register_customer(customer: CustomerRegister):
                 "name": customer.name,
                 "email": customer.email,
                 "phone": customer.phone,
-                
                 "password": hash_password(customer.password),
                 "is_verified": False,
             }
@@ -97,8 +96,10 @@ def register_customer(customer: CustomerRegister):
     except Exception as e:
         print("ERROR:", repr(e))
         raise
+
+
 @router.post("/login")
-def login_customer(customer: CustomerLogin):
+def login_customer(customer: CustomerLogin, response: Response):
 
     db_customer = customer_collection.find_one({"email": customer.email})
 
@@ -113,7 +114,23 @@ def login_customer(customer: CustomerLogin):
 
     token = create_access_token({"customer_id": str(db_customer["_id"])})
 
-    return {"access_token": token}
+    response.set_cookie(
+        key="token",
+        value=token,
+        httponly=True,
+        secure=False,  # True in production
+        samesite="lax",
+        max_age=60 * 60 * 24 * 7,
+    )
+
+    return {
+        "message": "Login successful",
+        "customer": {
+            "id": str(db_customer["_id"]),
+            "name": db_customer["name"],
+            "email": db_customer["email"],
+        },
+    }
 
 
 @router.post("/verify-otp")
@@ -199,4 +216,13 @@ def get_product(product_id: str):
         "stock": product["stock"],
         "category": product["category"],
         "image": product.get("image_url", ""),
+    }
+
+@router.post("/logout")
+def logout(response: Response):
+
+    response.delete_cookie("token")
+
+    return {
+        "message": "Logged out successfully"
     }

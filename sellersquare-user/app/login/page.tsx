@@ -56,7 +56,8 @@ const AISLE_ICONS = [
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login } = useAuth();
+  // const { login } = useAuth();
+  const { checkAuth } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -84,10 +85,17 @@ export default function LoginPage() {
       if (errors.email || errors.password) return;
 
       setLoading(true);
+
       try {
-        const res = await api.post("/customer/login", { email, password });
-        login(res.data.access_token);
-        router.push("/");
+        await api.post("/customer/login", {
+          email,
+          password,
+        });
+
+        await checkAuth();
+
+        router.replace("/");
+        router.refresh();
       } catch (error: any) {
         setServerError(
           error?.response?.data?.detail ||
@@ -97,7 +105,7 @@ export default function LoginPage() {
         setLoading(false);
       }
     },
-    [email, password, errors, login, router]
+    [email, password, errors, checkAuth, router]
   );
 
   return (
@@ -202,8 +210,8 @@ export default function LoginPage() {
                       aria-invalid={Boolean(touched.email && errors.email)}
                       aria-describedby={touched.email && errors.email ? "email-error" : undefined}
                       className={`w-full rounded-lg border px-3.5 py-2.5 text-sm outline-none transition-colors focus:ring-2 focus:ring-[#E2A93D]/30 ${touched.email && errors.email
-                          ? "border-[#C6544B] focus:border-[#C6544B]"
-                          : "border-[#DEE6DB] focus:border-[#123524]"
+                        ? "border-[#C6544B] focus:border-[#C6544B]"
+                        : "border-[#DEE6DB] focus:border-[#123524]"
                         }`}
                     />
                     {touched.email && errors.email && (
@@ -240,8 +248,8 @@ export default function LoginPage() {
                           touched.password && errors.password ? "password-error" : undefined
                         }
                         className={`w-full rounded-lg border px-3.5 py-2.5 pr-10 text-sm outline-none transition-colors focus:ring-2 focus:ring-[#E2A93D]/30 ${touched.password && errors.password
-                            ? "border-[#C6544B] focus:border-[#C6544B]"
-                            : "border-[#DEE6DB] focus:border-[#471cc9]"
+                          ? "border-[#C6544B] focus:border-[#C6544B]"
+                          : "border-[#DEE6DB] focus:border-[#471cc9]"
                           }`}
                       />
                       <button

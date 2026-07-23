@@ -7,43 +7,52 @@ import {
   useState,
   ReactNode,
 } from "react";
+import api from "@/lib/api";
 
 type AuthContextType = {
   isLoggedIn: boolean;
-  token: string | null;
-  login: (token: string) => void;
-  logout: () => void;
+  loading: boolean;
+  checkAuth: () => Promise<void>;
+  logout: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [token, setToken] = useState<string | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const savedToken = localStorage.getItem("token");
-
-    if (savedToken) {
-      setToken(savedToken);
+  const checkAuth = async () => {
+    try {
+      await api.get("/customer/profile");
+      setIsLoggedIn(true);
+    } catch {
+      setIsLoggedIn(false);
+    } finally {
+      setLoading(false);
     }
-  }, []);
-
-  const login = (newToken: string) => {
-    localStorage.setItem("token", newToken);
-    setToken(newToken);
   };
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    setToken(null);
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  const logout = async () => {
+    try {
+      await api.post("/customer/logout");
+    } catch (err) {
+      console.error(err);
+    }
+
+    setIsLoggedIn(false);
   };
 
   return (
     <AuthContext.Provider
       value={{
-        token,
-        isLoggedIn: !!token,
-        login,
+        isLoggedIn,
+        loading,
+        checkAuth,
         logout,
       }}
     >
@@ -56,7 +65,7 @@ export function useAuth() {
   const context = useContext(AuthContext);
 
   if (!context) {
-    throw new Error("useAuth must be used inside AuthProvider");
+    throw new Error("useAuth must be used within AuthProvider");
   }
 
   return context;

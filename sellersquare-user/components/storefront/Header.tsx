@@ -33,12 +33,16 @@ function CountBadge({ count }: { count: number }) {
 
 export function Header() {
   const { cartCount, wishlistCount } = useCartWishlist();
-  const { isLoggedIn, logout } = useAuth();
+  const { isLoggedIn, logout, loading } = useAuth();
   const router = useRouter();
+  if (loading) {
+    return null; // or a loading placeholder
+  }
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     router.push("/");
+    router.refresh();
   };
 
   return (
