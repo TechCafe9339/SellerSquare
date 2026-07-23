@@ -88,7 +88,7 @@ export default function HomePage() {
 
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
-              href="/seller/register"
+              href="/register"
               className="group inline-flex items-center gap-2 rounded-lg bg-[#0B0F19] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#0B0F19]/90"
             >
               Start selling
@@ -98,7 +98,7 @@ export default function HomePage() {
               />
             </Link>
             <Link
-              href="/seller/login"
+              href="/login"
               className="rounded-lg border border-black/10 bg-white px-6 py-3 text-sm font-semibold text-[#0B0F19] transition-colors hover:bg-black/5"
             >
               Seller login
