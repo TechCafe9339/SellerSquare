@@ -66,7 +66,7 @@ export function Header() {
         {/* Search */}
         <form
           role="search"
-          className="flex max-w-[680px] flex-1 overflow-hidden rounded-xl border border-[#DEE6DB] bg-white transition focus-within:border-[#123524] focus-within:ring-4 focus-within:ring-[#123524]/10"
+          className="flex max-w-[680px] flex-1 overflow-hidden rounded-xl border border-[#DEE6DB] bg-white transition focus-within:border-[#f7fcf9] focus-within:ring-4 focus-within:ring-[#123524]/10"
         >
           <select
             aria-label="Search category"

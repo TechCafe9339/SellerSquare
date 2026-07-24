@@ -19,10 +19,19 @@ function getTimeLeft() {
 }
 
 export function DealCountdown() {
-  const [time, setTime] = useState(getTimeLeft());
+  const [time, setTime] = useState({
+    h: 0,
+    m: 0,
+    s: 0,
+  });
 
   useEffect(() => {
-    const id = setInterval(() => setTime(getTimeLeft()), 1000);
+    setTime(getTimeLeft());
+
+    const id = setInterval(() => {
+      setTime(getTimeLeft());
+    }, 1000);
+
     return () => clearInterval(id);
   }, []);
 

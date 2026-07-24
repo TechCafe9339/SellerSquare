@@ -1,9 +1,10 @@
-import FeaturedProducts from "@/components/FeaturedProducts";
+// import FeaturedProducts from "@/components/FeaturedProducts";
 
 export default function ProductPage(){
     return(
         <>
-            <FeaturedProducts />
+            {/* <FeaturedProducts /> */}
+            product page
         </>
     )
 }

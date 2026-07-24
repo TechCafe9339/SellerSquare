@@ -7,9 +7,10 @@ export function CategoryTiles() {
     <section className="px-5 pt-11 md:px-7">
       <div className="mx-auto mb-5 flex max-w-[1320px] items-baseline justify-between">
         <h2 className="text-xl font-bold md:text-2xl">Shop by category</h2>
-        <Link href="/categories" className="text-sm font-semibold text-indigo-600">
+        {/* later we impleme a full category page with all categories and a search bar, for now we just show the top 8 categories */}
+        {/* <Link href="/categories" className="text-sm font-semibold text-indigo-600">
           View all →
-        </Link>
+        </Link> */}
       </div>
       <div className="mx-auto grid max-w-[1320px] grid-cols-3 gap-3.5 sm:grid-cols-4 lg:grid-cols-8">
         {categoryTiles.map((tile) => (
